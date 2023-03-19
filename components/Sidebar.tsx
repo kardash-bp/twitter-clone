@@ -28,7 +28,7 @@ const Sidebar = () => {
         <SidebarMenuItem text='Profile' icon={userIcon} />
         <SidebarMenuItem text='More' icon={more} />
       </div>
-      <button className='lg:w-56 h-12 lg:bg-blue-400 lg:rounded-full ml-2'>
+      <button className='lg:w-56 h-12 lg:bg-blue-400 lg:rounded-full ml-2 lg:shadow-md hover:brightness-95'>
         <Image
           src='/tweet.png'
           alt='tweet button'
@@ -36,7 +36,7 @@ const Sidebar = () => {
           height={52}
           className='lg:hidden'
         />
-        <span className=' text-white font-bold shadow-md hover:brightness-95 text-lg hidden lg:inline'>
+        <span className=' text-white font-bold hover:brightness-95 text-lg hidden lg:inline'>
           {' '}
           Tweet
         </span>

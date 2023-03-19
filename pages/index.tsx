@@ -1,5 +1,7 @@
+import Feed from '@/components/TweetMain'
 import Sidebar from '@/components/Sidebar'
 import Head from 'next/head'
+import TweetMain from '@/components/TweetMain'
 
 export default function Home() {
   return (
@@ -14,7 +16,7 @@ export default function Home() {
         {/* sidebar */}
         <Sidebar />
         {/* feed */}
-
+        <TweetMain />
         {/* widgets */}
 
         {/* modal */}
