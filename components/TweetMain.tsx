@@ -1,7 +1,9 @@
 import Image from 'next/image'
 import React from 'react'
+import Post from './Post'
 import TweetInput from './TweetInput'
-
+import { posts } from '../assets/data'
+import { TPost } from '@/types'
 const TweetMain = () => {
   return (
     <div className='flex-grow max-w-xl sm:ml-[73px] lg:ml-[370px] border-x lg:min-w-[576px]'>
@@ -14,6 +16,9 @@ const TweetMain = () => {
         </div>
       </div>
       <TweetInput />
+      {posts.map((post: TPost, idx: number) => (
+        <Post key={idx} post={post} />
+      ))}
     </div>
   )
 }
