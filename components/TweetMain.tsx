@@ -6,7 +6,7 @@ import { posts } from '../assets/data'
 import { TPost } from '@/types'
 const TweetMain = () => {
   return (
-    <div className='flex-grow max-w-xl sm:ml-[73px] lg:ml-[370px] border-x lg:min-w-[576px]'>
+    <div className='border-x lg:min-w-[576px]'>
       {/* main header */}
       <div className='flex sticky items-center justify-between py-2 px-3 top-0 z-50 bg-white border-b border-gray-200'>
         {' '}

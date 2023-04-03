@@ -10,16 +10,18 @@ import {
   explore,
   homeIcon,
   more,
+  search,
   userIcon,
 } from '../assets/icons'
 const Sidebar = () => {
   return (
-    <div className='hidden sm:flex flex-col p-2 lg:items-start fixed h-full'>
+    <div className='hidden sm:flex sm:flex-col p-2 lg:w-[275px] lg:items-start  h-full'>
       <div className='hoverSideMenu p-0 hover:bg-blue-100 ml-2'>
         <Image src='/logo.png' width={52} height={52} alt='logo' />
       </div>
       <div className='mt-4 mb-2 ml-2'>
         <SidebarMenuItem text='Home' icon={homeIcon} active />
+        <SidebarMenuItem text='Search' icon={search} />
         <SidebarMenuItem text='Explore' icon={explore} />
         <SidebarMenuItem text='Notifications' icon={bell} />
         <SidebarMenuItem text='Messages' icon={envelope} />
@@ -44,7 +46,7 @@ const Sidebar = () => {
       <div className='w-full ml-1 hoverSideMenu text-gray-700 flex items-center justify-center lg:justify-start mt-auto gap-1'>
         <Image src='/user.png' alt='user' width={52} height={52} />
 
-        <div className='hidden lg:block lg:mx-2'>
+        <div className='hidden xl:block lg:mx-2'>
           <h4 className='font-bold'>John Doe</h4>
           <p className='text-gray-500'>@john-doe</p>
         </div>
