@@ -18,9 +18,10 @@ export type TArticle = {
 }
 export type TProps = {
   data: TArticle[]
+  users: any
 }
 
-export default function Home({ data }: TProps) {
+export default function Home({ data, users }: TProps) {
   return (
     <>
       <Head>
@@ -35,7 +36,7 @@ export default function Home({ data }: TProps) {
         {/* feed */}
         <TweetMain />
         {/* widgets */}
-        <Widgets data={data} />
+        <Widgets data={data} users={users} />
         {/* modal */}
       </main>
     </>
@@ -48,8 +49,15 @@ export async function getServerSideProps() {
     'https://saurav.tech/NewsAPI/top-headlines/category/sports/us.json'
   )
   const news = await res.json()
+  // Who to follow - random user
+  const data = await fetch(
+    'https://randomuser.me/api/?gender=female&results=15&inc=name,picture,login,email'
+  )
+  const usersResponse = await data.json()
+  console.log(usersResponse)
   return {
     props: {
+      users: usersResponse.results,
       data: news.articles,
     },
   }

@@ -3,8 +3,9 @@ import { TProps } from '@/pages'
 import React from 'react'
 import News from './News'
 import Footer from './Footer'
+import TwitterUsers from './TwitterUsers'
 
-const Widgets = ({ data }: TProps) => {
+const Widgets = ({ data, users }: TProps) => {
   return (
     <div className='hidden br:block br:w-[350px] ml-6 space-y-5'>
       <div className='w-[95%]  sticky top-0 bg-white py-1.5 z-40'>
@@ -18,6 +19,7 @@ const Widgets = ({ data }: TProps) => {
         </div>
       </div>
       <News news={data} />
+      <TwitterUsers users={users} />
       <Footer />
     </div>
   )

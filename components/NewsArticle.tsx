@@ -5,7 +5,7 @@ import React from 'react'
 
 const NewsArticle = ({ article }: { article: TArticle }) => {
   return (
-    <div className=' text-gray-700 bg-gray-100 hover:bg-gray-200 transition duration-300 mb-3 rounded-xl p-3 w-[95%]'>
+    <div className=' text-gray-700  hover:bg-gray-100 transition duration-300 mb-3 rounded-xl p-3 w-[95%]'>
       <Link
         href={article.url}
         target='_blank'
@@ -13,9 +13,9 @@ const NewsArticle = ({ article }: { article: TArticle }) => {
       >
         <div className='space-y-1'>
           <h4 className='leading-5 font-bold'>
-            {article.title.split(' ').slice(0, 15).join(' ')} ...
+            {article?.title?.split(' ').slice(0, 15).join(' ')} ...
           </h4>
-          <p className='text-sm'>{article.source.name}</p>
+          <p className='text-sm'>{article.source?.name}</p>
         </div>
         <img
           src={
@@ -32,4 +32,3 @@ const NewsArticle = ({ article }: { article: TArticle }) => {
 }
 
 export default NewsArticle
-// https://api.unsplash.com/photos/random?client_id=${process.env.NEXT_PUBLIC_UNSPLASH_API_KEY}
