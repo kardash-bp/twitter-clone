@@ -22,7 +22,7 @@ const TwitterToFollow = ({ user }: any) => {
           @{user.login.username}
         </span>
       </div>
-      <button className='lg:w-48 h-10 bg-black text-white font-bold text-base px-5 rounded-full'>
+      <button className=' h-10 bg-black text-white font-bold text-base px-5 rounded-full'>
         Follow
       </button>
     </div>

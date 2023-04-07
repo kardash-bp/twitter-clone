@@ -1,16 +1,18 @@
 import { emoji, imgIcon } from '@/assets/icons'
+import { useSession } from 'next-auth/react'
 import Image from 'next/image'
 import React from 'react'
 
 const TweetInput = () => {
+  const { data: session, status } = useSession()
   return (
     <div className='flex border-b border-gray-200 p-3 gap-5'>
       <Image
-        src='/user.png'
+        src={session?.user.image!}
         alt='user'
         width={44}
         height={44}
-        className='cursor-pointer hover:brightness-95 w-11 h-11'
+        className='rounded-full cursor-pointer hover:brightness-95 w-11 h-11'
       />
       <div className='flex-grow divide-y divide-gray-200'>
         <textarea

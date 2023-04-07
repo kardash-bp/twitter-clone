@@ -54,7 +54,6 @@ export async function getServerSideProps() {
     'https://randomuser.me/api/?gender=female&results=15&inc=name,picture,login,email'
   )
   const usersResponse = await data.json()
-  console.log(usersResponse)
   return {
     props: {
       users: usersResponse.results,

@@ -28,7 +28,8 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "assets/data.js"
+    "assets/data.js",
+    "firebase.js"
   ],
   "exclude": [
     "node_modules"

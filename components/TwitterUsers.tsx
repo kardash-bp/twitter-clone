@@ -5,7 +5,7 @@ import TwitterToFollow from './TwitterToFollow'
 const TwitterUsers = ({ users }: any) => {
   const [numberToShow, setNumberToShow] = useState(3)
   return (
-    <div className='bg-gray-50 rounded-lg'>
+    <div className='sticky top-16 bg-gray-50 rounded-lg '>
       <h3 className='font-bold text-xl p-4'>Who to follow</h3>
       {users
         .map((user: any, i: number) => <TwitterToFollow key={i} user={user} />)
