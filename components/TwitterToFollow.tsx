@@ -18,9 +18,7 @@ const TwitterToFollow = ({ user }: any) => {
           {user.name.last}
         </span>
 
-        <span className='text-gray-500 truncate leading-5'>
-          @{user.login.username}
-        </span>
+        <span className='text-gray-500 leading-5'>@{user.login.username}</span>
       </div>
       <button className=' h-10 bg-black text-white font-bold text-base px-5 rounded-full'>
         Follow
