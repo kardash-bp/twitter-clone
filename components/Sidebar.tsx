@@ -16,7 +16,6 @@ import {
 import { useSession } from 'next-auth/react'
 const Sidebar = () => {
   const { data: session, status } = useSession()
-  console.log(session)
   return (
     <div className='hidden sm:flex sm:flex-col w-[60px]  xl:w-[275px]'>
       <div className='p-0 ml-2'>
@@ -76,7 +75,7 @@ const Sidebar = () => {
         </>
       ) : (
         <button
-          className='w-[5rem] p-1 h-12 text-white bg-blue-400 rounded-full ml-2 shadow-md hover:brightness-95'
+          className='w-[3rem] leading-4 xl:w-[120px] xl:p-1 h-12 text-white bg-blue-400 rounded-full ml-2 shadow-md hover:brightness-95'
           onClick={() => signIn()}
         >
           Sign In{' '}

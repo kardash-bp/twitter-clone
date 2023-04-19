@@ -6,7 +6,7 @@ import { storage, ref } from '../firebase'
 import { Dispatch, SetStateAction } from "react";
 
 export async function firebaseUploadHandler(userId: string, file: File, cbPercent: Dispatch<SetStateAction<number>>, cbUrl: Dispatch<SetStateAction<string>>) {
-  let linkUrl = ''
+  // let linkUrl = ''
   if (!file) {
     alert("Please choose a file first!")
   }

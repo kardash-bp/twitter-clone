@@ -20,3 +20,14 @@ export type TProvider = {
     }
   }
 }
+
+export type TweetType = {
+  text: string
+  id: string
+  image: string
+  data: string
+}
+export type LikesType = {
+  uid: string
+  username: string
+}

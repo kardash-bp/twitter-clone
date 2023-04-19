@@ -21,13 +21,13 @@ const SignIn = ({ providers }: TProvider) => {
               <Image src='/logo.png' width={68} height={68} alt='logo' />{' '}
               Twitter Clone Demo
             </h1>
-            <button
+            <a
               onClick={() => signIn(provider.id)}
-              className='flex gap-2 items-center w-full justify-center py-2 bg-yellow-100 hover:text-[#1da1f2] rounded-md  border-transparent border-2  hover:border-[#1da1f2] transition-all duration-300'
+              className='flex gap-2 items-center w-full justify-center py-2 bg-yellow-100 hover:text-[#1da1f2] rounded-md  border-transparent border-2  hover:border-[#1da1f2] transition-all duration-300 cursor-pointer'
             >
               <FcGoogle size={28} /> Sign In with{' '}
               <span className='font-bold'>{provider.name}</span>{' '}
-            </button>
+            </a>
           </div>
         ))}
       </div>

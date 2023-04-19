@@ -1,8 +1,16 @@
-import Feed from '@/components/TweetMain'
 import Sidebar from '@/components/Sidebar'
 import Head from 'next/head'
 import TweetMain from '@/components/TweetMain'
 import Widgets from '@/components/Widgets'
+import {
+  DocumentData,
+  collection,
+  getDocs,
+  orderBy,
+  query,
+} from 'firebase/firestore'
+import { db } from '@/firebase'
+import { TweetType } from '@/types'
 export type TArticle = {
   source: {
     id: string | null
@@ -19,9 +27,10 @@ export type TArticle = {
 export type TProps = {
   data: TArticle[]
   users: any
+  tweets: TweetType[] | []
 }
 
-export default function Home({ data, users }: TProps) {
+export default function Home({ data, users, tweets }: TProps) {
   return (
     <>
       <Head>
@@ -34,7 +43,7 @@ export default function Home({ data, users }: TProps) {
         {/* sidebar */}
         <Sidebar />
         {/* feed */}
-        <TweetMain />
+        <TweetMain posts={[...tweets]} />
         {/* widgets */}
         <Widgets data={data} users={users} />
         {/* modal */}
@@ -45,6 +54,19 @@ export default function Home({ data, users }: TProps) {
 
 // 'https://saurav.tech/NewsAPI/top-headlines/category/entertainment/rs.json'
 export async function getServerSideProps() {
+  const colRef = collection(db, 'posts')
+  const q = query(colRef, orderBy('date', 'desc'))
+  const docsSnap = await getDocs(q)
+  let tweets = [] as DocumentData
+
+  docsSnap.docs.forEach((doc) => {
+    if (!doc) return
+    const postDoc = doc.data()
+    postDoc.id = doc.id
+    console.log(postDoc)
+    tweets.push(postDoc)
+  })
+
   const res = await fetch(
     'https://saurav.tech/NewsAPI/top-headlines/category/sports/us.json'
   )
@@ -58,6 +80,7 @@ export async function getServerSideProps() {
     props: {
       users: usersResponse.results,
       data: news.articles,
+      tweets,
     },
   }
 }

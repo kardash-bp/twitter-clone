@@ -1,10 +1,12 @@
 import Image from 'next/image'
 import React from 'react'
-import Post from './Post'
+const Post = dynamic(() => import('./Post'), { ssr: false })
 import TweetInput from './TweetInput'
-import { posts } from '../assets/data'
-import { TPost } from '@/types'
-const TweetMain = () => {
+import { TweetType } from '@/types'
+import { useSession } from 'next-auth/react'
+import dynamic from 'next/dynamic'
+const TweetMain = ({ posts }: { posts: TweetType[] }) => {
+  const { data: session } = useSession()
   return (
     <div className='border-x lg:min-w-[576px]'>
       {/* main header */}
@@ -16,8 +18,8 @@ const TweetMain = () => {
         </div>
       </div>
       <TweetInput />
-      {posts.map((post: TPost, idx: number) => (
-        <Post key={idx} post={post} />
+      {posts?.map((post: any, idx: number) => (
+        <Post key={idx} post={{ ...post, ...session?.user }} />
       ))}
     </div>
   )
