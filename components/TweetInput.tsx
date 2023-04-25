@@ -5,10 +5,12 @@ import Image from 'next/image'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { addDoc, collection, doc } from 'firebase/firestore'
 import { firebaseUploadHandler } from '@/lib/firebaseUploadHandler'
+import { useRouter } from 'next/router'
 const TweetInput = () => {
   const [input, setInput] = useState('')
   const [image, setImage] = useState<File>()
   const [imageUrl, setImageUrl] = useState('')
+  const router = useRouter()
   // upload progress
   const [percent, setPercent] = useState(0)
   const [loading, setLoading] = useState(false)
@@ -32,6 +34,7 @@ const TweetInput = () => {
       setPercent(0)
       setImageUrl('')
       setLoading(false)
+      router.replace(router.asPath)
     } catch (err: any) {
       console.log(err.message)
       setLoading(false)

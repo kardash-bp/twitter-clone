@@ -1,25 +1,43 @@
 import { chartBar, chat, ellipsis, heart, share, trash } from '@/assets/icons'
 import { db } from '@/firebase'
-import { LikesType, TPost } from '@/types'
 import {
   doc,
   setDoc,
-  DocumentData,
   getDoc,
   arrayUnion,
   arrayRemove,
   updateDoc,
+  deleteDoc,
 } from 'firebase/firestore'
+import { getStorage, ref, deleteObject } from 'firebase/storage'
 import { useSession } from 'next-auth/react'
 import Image from 'next/image'
+import { useRouter } from 'next/router'
 import React, { useEffect, useState, useCallback } from 'react'
 const Post = ({ post }: any) => {
+  const router = useRouter()
   const { data } = useSession()
   const [likes, setLikes] = useState<string[]>([])
   const [liked, setLiked] = useState(false)
   const formattedDate = new Date(post.date).toLocaleDateString('sr-RS')
   const formattedTime = new Date(post.date).toLocaleTimeString('sr-RS')
 
+  const delTweet = async () => {
+    if (window.confirm('Are you sure?')) {
+      await deleteDoc(doc(db, 'posts', post.id))
+      await deleteDoc(doc(db, 'likes', post.id))
+      if (post.imageTw) {
+        const storage = getStorage()
+        const fileRef = ref(storage, post.imageTw)
+        try {
+          await deleteObject(fileRef)
+        } catch (error) {
+          console.log(error)
+        }
+      }
+      router.replace(router.asPath)
+    }
+  }
   const likeAddRemove = async () => {
     const fireDoc = doc(db, `likes/${post.id}`)
     const docSnap = await getDoc(fireDoc)
@@ -65,7 +83,6 @@ const Post = ({ post }: any) => {
       setLiked(false)
     }
   }, [likes])
-  console.log(likes)
   return (
     <div className='flex p-3 cursor-pointer border-b border-gray-200'>
       <div className='mr-4'>
@@ -81,9 +98,11 @@ const Post = ({ post }: any) => {
         <div className='flex justify-between'>
           <div className='flex gap-1 whitespace-nowrap items-center'>
             <h4 className='font-bold text-[14px] sm:text-[1rem] hover:underline'>
-              {post.name}
+              {data?.user.name}
             </h4>
-            <span className='text-sm sm:text-base '>@{post.username} - </span>
+            <span className='text-sm sm:text-base '>
+              @{data?.user.username} -{' '}
+            </span>
             <span className='text-sm sm:text-base hover:underline'>
               {formattedTime} - {formattedDate}
             </span>
@@ -97,18 +116,24 @@ const Post = ({ post }: any) => {
             {post.text}
           </p>
         </div>
-        <div className=''>
-          <Image
-            src={post.imageTw}
-            width={500}
-            height={300}
-            alt='unsplash'
-            className='object-cover rounded-2xl'
-          />
-        </div>
+        {post.imageTw && (
+          <div className=''>
+            <Image
+              src={post.imageTw}
+              width={500}
+              height={300}
+              alt='unsplash'
+              className='object-cover rounded-2xl'
+            />
+          </div>
+        )}
         <div className='post flex items-center justify-between text-gray-500 p-2'>
           <span className='icon hover:text-sky-500'>{chat}</span>
-          <span className='icon hover:text-red-600'>{trash}</span>
+          {data?.user.uid === post.uid && (
+            <span className='icon hover:text-red-600' onClick={delTweet}>
+              {trash}
+            </span>
+          )}
           <span
             className={`icon ${
               liked && 'text-red-700'

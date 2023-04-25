@@ -5,8 +5,8 @@ import TweetInput from './TweetInput'
 import { TweetType } from '@/types'
 import { useSession } from 'next-auth/react'
 import dynamic from 'next/dynamic'
+import { AnimatePresence, motion } from 'framer-motion'
 const TweetMain = ({ posts }: { posts: TweetType[] }) => {
-  const { data: session } = useSession()
   return (
     <div className='border-x lg:min-w-[576px]'>
       {/* main header */}
@@ -18,9 +18,20 @@ const TweetMain = ({ posts }: { posts: TweetType[] }) => {
         </div>
       </div>
       <TweetInput />
-      {posts?.map((post: any, idx: number) => (
-        <Post key={idx} post={{ ...post, ...session?.user }} />
-      ))}
+      <AnimatePresence>
+        {posts?.map((post: any, idx: number) => (
+          <motion.div
+            key={post.id}
+            initial={{ x: -500, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -500, opacity: 0 }}
+            transition={{ duration: 1 }}
+          >
+            {' '}
+            <Post key={idx} post={{ ...post }} />
+          </motion.div>
+        ))}
+      </AnimatePresence>
     </div>
   )
 }

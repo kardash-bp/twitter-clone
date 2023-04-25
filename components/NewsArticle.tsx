@@ -17,15 +17,13 @@ const NewsArticle = ({ article }: { article: TArticle }) => {
           </h4>
           <p className='text-sm'>{article.source?.name}</p>
         </div>
-        <img
-          src={
-            article.urlToImage
-              ? article.urlToImage
-              : 'https://source.unsplash.com/random'
-          }
-          alt='cover photo'
-          className='w-[100px] rounded-xl'
-        />
+        {article.urlToImage && (
+          <img
+            src={article.urlToImage}
+            alt='cover photo'
+            className='w-[100px] rounded-xl'
+          />
+        )}
       </Link>
     </div>
   )
