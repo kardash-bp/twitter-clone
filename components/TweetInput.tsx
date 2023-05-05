@@ -1,4 +1,4 @@
-import { emoji, imgIcon } from '@/assets/icons'
+import { emoji, imgIcon, pin } from '@/assets/icons'
 import { db } from '@/firebase'
 import { useSession } from 'next-auth/react'
 import Image from 'next/image'
@@ -25,6 +25,9 @@ const TweetInput = () => {
       setLoading(true)
       const docRef = await addDoc(collection(db, 'posts'), {
         uid: session?.user.uid,
+        name: session?.user.name,
+        username: session?.user.username,
+        userImage: session?.user.image,
         text: input,
         date: new Date().toLocaleString('rs'),
         imageTw: imageUrl,
@@ -114,6 +117,9 @@ const TweetInput = () => {
               </div>
               <div className='hoverSideMenu flex items-center justify-center'>
                 <span className='icon text-sky-500'>{emoji}</span>
+              </div>
+              <div className='hoverSideMenu flex items-center justify-center'>
+                <span className='icon text-sky-500'>{pin}</span>
               </div>
             </div>
             <button

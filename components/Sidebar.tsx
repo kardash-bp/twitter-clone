@@ -17,7 +17,7 @@ import { useSession } from 'next-auth/react'
 const Sidebar = () => {
   const { data: session, status } = useSession()
   return (
-    <div className='hidden sm:flex sm:flex-col w-[60px]  xl:w-[245px]'>
+    <div className='hidden pl-2 sm:flex sm:flex-col w-[60px]  xl:w-[245px]'>
       <div className=''>
         <Image src='/logo.png' width={52} height={52} alt='logo' />
       </div>
@@ -52,7 +52,7 @@ const Sidebar = () => {
               Tweet
             </span>
           </button>
-          <div className='hoverSideMenu  text-gray-700 flex items-center justify-center xl:justify-start mt-4 xl:h-auto xl:p-2'>
+          <div className='hoverSideMenu  text-gray-800 flex items-center justify-center xl:justify-start mt-4 xl:h-auto xl:p-2'>
             <Image
               src={session.user.image}
               alt='user'

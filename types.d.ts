@@ -31,3 +31,10 @@ export type LikesType = {
   uid: string
   username: string
 }
+
+export interface IClickOutsideProps {
+  children: React.ReactNode
+  wrapperId: string // Id of our outside wrapper where we will listen for click
+  listen: boolean // Toggle to listen for click
+  onClickOutside: () => void // 
+}

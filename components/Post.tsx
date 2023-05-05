@@ -1,5 +1,6 @@
 import { chartBar, chat, ellipsis, heart, share, trash } from '@/assets/icons'
 import { db } from '@/firebase'
+import { useCommentsStore } from '@/store/commentsStore'
 import {
   doc,
   setDoc,
@@ -10,18 +11,27 @@ import {
   deleteDoc,
 } from 'firebase/firestore'
 import { getStorage, ref, deleteObject } from 'firebase/storage'
-import { useSession } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState, useCallback } from 'react'
 const Post = ({ post }: any) => {
   const router = useRouter()
   const { data } = useSession()
+  const setOpen = useCommentsStore((state) => state.setOpen)
   const [likes, setLikes] = useState<string[]>([])
   const [liked, setLiked] = useState(false)
   const formattedDate = new Date(post.date).toLocaleDateString('sr-RS')
   const formattedTime = new Date(post.date).toLocaleTimeString('sr-RS')
 
+  const handleComment = async () => {
+    console.log({ data })
+    if (!data || !data.user.username) {
+      signIn()
+    } else {
+      setOpen(post)
+    }
+  }
   const delTweet = async () => {
     if (window.confirm('Are you sure?')) {
       await deleteDoc(doc(db, 'posts', post.id))
@@ -39,11 +49,12 @@ const Post = ({ post }: any) => {
     }
   }
   const likeAddRemove = async () => {
+    console.log({ data })
+    if (!data || !data.user.username) return
+
     const fireDoc = doc(db, `likes/${post.id}`)
     const docSnap = await getDoc(fireDoc)
     const fireData = docSnap.data()
-
-    if (!data?.user?.username) return
 
     if (fireData?.usernames.includes(data?.user.username)) {
       // remove like
@@ -87,7 +98,7 @@ const Post = ({ post }: any) => {
     <div className='flex p-3 cursor-pointer border-b border-gray-200'>
       <div className='mr-4'>
         <Image
-          src={post?.image}
+          src={post.image}
           alt='user'
           width={44}
           height={44}
@@ -98,11 +109,9 @@ const Post = ({ post }: any) => {
         <div className='flex justify-between'>
           <div className='flex gap-1 whitespace-nowrap items-center'>
             <h4 className='font-bold text-[14px] sm:text-[1rem] hover:underline'>
-              {data?.user.name}
+              {post.name}
             </h4>
-            <span className='text-sm sm:text-base '>
-              @{data?.user.username} -{' '}
-            </span>
+            <span className='text-sm sm:text-base '>@{post.username} - </span>
             <span className='text-sm sm:text-base hover:underline'>
               {formattedTime} - {formattedDate}
             </span>
@@ -128,7 +137,9 @@ const Post = ({ post }: any) => {
           </div>
         )}
         <div className='post flex items-center justify-between text-gray-500 p-2'>
-          <span className='icon hover:text-sky-500'>{chat}</span>
+          <span className='icon hover:text-sky-500' onClick={handleComment}>
+            {chat}
+          </span>
           {data?.user.uid === post.uid && (
             <span className='icon hover:text-red-600' onClick={delTweet}>
               {trash}

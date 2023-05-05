@@ -11,6 +11,7 @@ import {
 } from 'firebase/firestore'
 import { db } from '@/firebase'
 import { TweetType } from '@/types'
+import CommentModal from '@/components/CommentModal'
 export type TArticle = {
   source: {
     id: string | null
@@ -40,13 +41,14 @@ export default function Home({ data, users, tweets }: TProps) {
         <link rel='icon' href='/tw.png' />
       </Head>
       <main className='flex flex-row gap-2 justify-center min-h-screen mx-auto'>
-        {/* sidebar */}
+        {/* sidebar navigation */}
         <Sidebar />
-        {/* feed */}
+        {/* main twitter feed */}
         <TweetMain posts={[...tweets]} />
         {/* widgets */}
         <Widgets data={data} users={users} />
         {/* modal */}
+        <CommentModal />
       </main>
     </>
   )
@@ -68,7 +70,7 @@ export async function getServerSideProps() {
   })
 
   const res = await fetch(
-    'https://saurav.tech/NewsAPI/top-headlines/category/sports/us.json'
+    'https://saurav.tech/NewsAPI/top-headlines/category/health/in.json'
   )
   const news = await res.json()
   // Who to follow - random user
