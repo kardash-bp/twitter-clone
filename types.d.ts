@@ -5,9 +5,17 @@ export type TPost = {
   userImg: string,
   img: string,
   text: string,
-  timestamp: string,
+  timestamp: any,
 }
-
+export type TComment = {
+  text: string
+  name: string
+  username: string
+  userImage: string
+  timestamp?: number
+  uid: string
+  postId: string
+}
 export type TProvider = {
   providers: {
     google: {

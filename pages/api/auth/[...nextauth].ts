@@ -11,6 +11,7 @@ export const authOptions: any = {
       clientSecret: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET!
     }),
   ],
+  secret: process.env.NEXT_PUBLIC_SECRET,
   callbacks: {
     async jwt({ token, user }: { token: JWT, user: AdapterUser }) {
       if (user) {

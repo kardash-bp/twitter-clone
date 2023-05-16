@@ -3,10 +3,15 @@ import React from 'react'
 const Post = dynamic(() => import('./Post'), { ssr: false })
 import TweetInput from './TweetInput'
 import { TweetType } from '@/types'
-import { useSession } from 'next-auth/react'
 import dynamic from 'next/dynamic'
 import { AnimatePresence, motion } from 'framer-motion'
-const TweetMain = ({ posts }: { posts: TweetType[] }) => {
+const TweetMain = ({
+  posts,
+  comments,
+}: {
+  posts: TweetType[]
+  comments: any
+}) => {
   return (
     <div className='border-x md:max-w-[576px]'>
       {/* main header */}
@@ -28,7 +33,11 @@ const TweetMain = ({ posts }: { posts: TweetType[] }) => {
             transition={{ duration: 1 }}
           >
             {' '}
-            <Post key={idx} post={{ ...post }} />
+            <Post
+              key={idx}
+              post={{ ...post }}
+              totalComments={comments[post.id]?.length || 0}
+            />
           </motion.div>
         ))}
       </AnimatePresence>

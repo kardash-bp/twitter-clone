@@ -1,6 +1,7 @@
 import { chartBar, chat, ellipsis, heart, share, trash } from '@/assets/icons'
 import { db } from '@/firebase'
 import { useCommentsStore } from '@/store/commentsStore'
+import { formatDate } from '@/utils/formatDate'
 import {
   doc,
   setDoc,
@@ -13,29 +14,32 @@ import {
 import { getStorage, ref, deleteObject } from 'firebase/storage'
 import { signIn, useSession } from 'next-auth/react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState, useCallback } from 'react'
-const Post = ({ post }: any) => {
+
+const Post = ({ post, totalComments = 0 }: any) => {
   const router = useRouter()
   const { data } = useSession()
   const setOpen = useCommentsStore((state) => state.setOpen)
+
   const [likes, setLikes] = useState<string[]>([])
   const [liked, setLiked] = useState(false)
-  const formattedDate = new Date(post.date).toLocaleDateString('sr-RS')
-  const formattedTime = new Date(post.date).toLocaleTimeString('sr-RS')
+  const formattedDate = formatDate(post.timestamp)
 
   const handleComment = async () => {
-    console.log({ data })
     if (!data || !data.user.username) {
       signIn()
     } else {
       setOpen(post)
     }
   }
+
   const delTweet = async () => {
     if (window.confirm('Are you sure?')) {
       await deleteDoc(doc(db, 'posts', post.id))
       await deleteDoc(doc(db, 'likes', post.id))
+      await deleteDoc(doc(db, 'comments', post.id))
       if (post.imageTw) {
         const storage = getStorage()
         const fileRef = ref(storage, post.imageTw)
@@ -46,10 +50,12 @@ const Post = ({ post }: any) => {
         }
       }
       router.replace(router.asPath)
+      if (router.pathname !== '/') {
+        router.push('/')
+      }
     }
   }
   const likeAddRemove = async () => {
-    console.log({ data })
     if (!data || !data.user.username) return
 
     const fireDoc = doc(db, `likes/${post.id}`)
@@ -83,6 +89,7 @@ const Post = ({ post }: any) => {
       console.log('No such document!')
     }
   }, [likes])
+
   useEffect(() => {
     getLikes()
   }, [])
@@ -95,70 +102,73 @@ const Post = ({ post }: any) => {
     }
   }, [likes])
   return (
-    <div className='flex p-3 cursor-pointer border-b border-gray-200'>
-      <div className='mr-4'>
-        <Image
-          src={post.image}
-          alt='user'
-          width={44}
-          height={44}
-          className='hidden lg:block rounded-full cursor-pointer hover:brightness-95 w-12 h-11'
-        />
-      </div>
-      <div className='w-full h-auto'>
-        <div className='flex justify-between'>
-          <div className='flex gap-1 whitespace-nowrap items-center'>
-            <h4 className='font-bold text-[14px] sm:text-[1rem] hover:underline'>
-              {post.name}
-            </h4>
-            <span className='text-sm sm:text-base '>@{post.username} - </span>
-            <span className='text-sm sm:text-base hover:underline'>
-              {formattedTime} - {formattedDate}
-            </span>
-          </div>
-          <div className='flex items-center justify-center w-10 h-10 rounded-full hover:bg-sky-100 hover:text-sky-500'>
-            <span className='icon '>{ellipsis}</span>
-          </div>
+    <div className='flex flex-col'>
+      <div className='flex flex-row p-3 border-b border-gray-200'>
+        <div className='mr-4'>
+          <Image
+            src={post.userImage ? post.userImage : '/user.png'}
+            alt='user'
+            width={44}
+            height={44}
+            className='hidden lg:block rounded-full cursor-pointer hover:brightness-95 w-12 h-11'
+          />
         </div>
-        <div>
-          <p className='text-gray-800 text-[14px] sm:text-base mb-2'>
-            {post.text}
-          </p>
-        </div>
-        {post.imageTw && (
-          <div className=''>
-            <Image
-              src={post.imageTw}
-              width={500}
-              height={300}
-              alt='unsplash'
-              className='object-cover rounded-2xl'
-            />
+        <div className='w-full h-auto'>
+          <div className='flex justify-between'>
+            <div className='flex gap-1 whitespace-nowrap items-center'>
+              <h4 className='font-bold text-[14px] sm:text-[1rem] hover:underline'>
+                {post.name}
+              </h4>
+              <span className='text-sm sm:text-base '>@{post.username} - </span>
+              <span className='text-sm sm:text-base hover:underline'>
+                {formattedDate}
+              </span>
+            </div>
+            <div className='flex items-center justify-center w-10 h-10 rounded-full hover:bg-sky-100 hover:text-sky-500'>
+              <span className='icon '>{ellipsis}</span>
+            </div>
           </div>
-        )}
-        <div className='post flex items-center justify-between text-gray-500 p-2'>
-          <span className='icon hover:text-sky-500' onClick={handleComment}>
-            {chat}
-          </span>
-          {data?.user.uid === post.uid && (
-            <span className='icon hover:text-red-600' onClick={delTweet}>
-              {trash}
-            </span>
-          )}
-          <span
-            className={`icon ${
-              liked && 'text-red-700'
-            } hover:text-red-600 flex relative ${likes.length > 0 && 'w-10'}`}
-            onClick={likeAddRemove}
-          >
-            {heart}
-            <span className='text-sm absolute top-0 right-0 text-gray-400 font-bold'>
-              {' '}
-              {likes.length > 0 && likes.length}
-            </span>
-          </span>
-          <span className='icon hover:text-sky-500'>{share}</span>
-          <span className='icon hover:text-sky-500'>{chartBar}</span>
+          <Link href={`/posts/${post.id}`}>
+            <p className='text-gray-800 text-[14px] sm:text-base py-2'>
+              {post.text}
+            </p>
+            {post.imageTw && (
+              <Image
+                src={post.imageTw}
+                width={500}
+                height={300}
+                alt='unsplash'
+                className='object-cover rounded-2xl '
+              />
+            )}{' '}
+          </Link>
+          <ul className='post flex  items-center justify-between text-gray-500 p-2'>
+            <li className='flex gap-2'>
+              <span className='icon hover:text-sky-500' onClick={handleComment}>
+                {chat}
+              </span>{' '}
+              <span> {totalComments > 0 && totalComments}</span>
+            </li>
+            {data?.user.uid === post.uid && (
+              <li className='icon hover:text-red-600' onClick={delTweet}>
+                {trash}
+              </li>
+            )}
+            <li
+              className={`icon ${
+                liked && 'text-red-700'
+              } hover:text-red-600 flex relative ${likes.length > 0 && 'w-10'}`}
+              onClick={likeAddRemove}
+            >
+              {heart}
+              <span className='text-sm absolute top-0 right-0 text-gray-400 font-bold'>
+                {' '}
+                {likes.length > 0 && likes.length}
+              </span>
+            </li>
+            <span className='icon hover:text-sky-500'>{share}</span>
+            <span className='icon hover:text-sky-500'>{chartBar}</span>
+          </ul>
         </div>
       </div>
     </div>

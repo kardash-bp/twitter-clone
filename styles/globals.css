@@ -16,7 +16,7 @@
     @apply w-6 h-6 text-sky-500 cursor-pointer hover:bg-sky-100;
   }
   .icon svg {
-    @apply block w-6 h-6;
+    @apply cursor-pointer block w-6 h-6;
   }
   .post > .icon {
     @apply rounded-full items-center hover:bg-sky-100;

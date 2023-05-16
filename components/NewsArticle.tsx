@@ -1,5 +1,4 @@
 import { TArticle } from '@/pages'
-import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
@@ -10,6 +9,7 @@ const NewsArticle = ({ article }: { article: TArticle }) => {
         href={article.url}
         target='_blank'
         className='flex gap-2 justify-between items-center'
+        rel='noreferrer'
       >
         <div className='space-y-1'>
           <h4 className='leading-5 font-bold'>

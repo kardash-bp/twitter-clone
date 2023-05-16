@@ -14,12 +14,16 @@ import {
   userIcon,
 } from '../assets/icons'
 import { useSession } from 'next-auth/react'
+import Link from 'next/link'
 const Sidebar = () => {
   const { data: session, status } = useSession()
   return (
     <div className='hidden pl-2 sm:flex sm:flex-col w-[60px]  xl:w-[245px]'>
       <div className=''>
-        <Image src='/logo.png' width={52} height={52} alt='logo' />
+        <Link href='/' className='cursor-pointer'>
+          {' '}
+          <Image src='/logo.png' width={52} height={52} alt='logo' />
+        </Link>
       </div>
       <div className='mt-4 mb-2'>
         <SidebarMenuItem text='Home' icon={homeIcon} active />

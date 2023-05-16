@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import Sidebar from '@/components/Sidebar'
 import Head from 'next/head'
 import TweetMain from '@/components/TweetMain'
@@ -10,8 +11,10 @@ import {
   query,
 } from 'firebase/firestore'
 import { db } from '@/firebase'
-import { TweetType } from '@/types'
+import { TComment, TweetType } from '@/types'
 import CommentModal from '@/components/CommentModal'
+import { useCommentsStore } from '@/store/commentsStore'
+
 export type TArticle = {
   source: {
     id: string | null
@@ -29,9 +32,14 @@ export type TProps = {
   data: TArticle[]
   users: any
   tweets: TweetType[] | []
+  comments: TComment[]
 }
 
-export default function Home({ data, users, tweets }: TProps) {
+export default function Home({ data, users, tweets, comments }: TProps) {
+  const { postComments, setPostComments } = useCommentsStore((state) => state)
+  useEffect(() => {
+    setPostComments(comments)
+  }, [])
   return (
     <>
       <Head>
@@ -44,7 +52,7 @@ export default function Home({ data, users, tweets }: TProps) {
         {/* sidebar navigation */}
         <Sidebar />
         {/* main twitter feed */}
-        <TweetMain posts={[...tweets]} />
+        <TweetMain posts={[...tweets]} comments={postComments} />
         {/* widgets */}
         <Widgets data={data} users={users} />
         {/* modal */}
@@ -57,17 +65,21 @@ export default function Home({ data, users, tweets }: TProps) {
 // 'https://saurav.tech/NewsAPI/top-headlines/category/entertainment/rs.json'
 export async function getServerSideProps() {
   const colRef = collection(db, 'posts')
-  const q = query(colRef, orderBy('date', 'desc'))
+  const q = query(colRef, orderBy('timestamp', 'desc'))
   const docsSnap = await getDocs(q)
   let tweets = [] as DocumentData
-
+  let comments = {} as DocumentData
   docsSnap.docs.forEach((doc) => {
     if (!doc) return
     const postDoc = doc.data()
     postDoc.id = doc.id
-    console.log(postDoc)
     tweets.push(postDoc)
   })
+  const commentsRef = collection(db, 'comments')
+  const commentsQuery = query(commentsRef)
+  const commentsSnap = await getDocs(commentsQuery)
+
+  commentsSnap.docs.forEach((doc) => (comments[doc.id] = doc.data().comments))
 
   const res = await fetch(
     'https://saurav.tech/NewsAPI/top-headlines/category/health/in.json'
@@ -83,6 +95,7 @@ export async function getServerSideProps() {
       users: usersResponse.results,
       data: news.articles,
       tweets,
+      comments,
     },
   }
 }

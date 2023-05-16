@@ -3,7 +3,7 @@ import { db } from '@/firebase'
 import { useSession } from 'next-auth/react'
 import Image from 'next/image'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
-import { addDoc, collection, doc } from 'firebase/firestore'
+import { addDoc, collection, Timestamp } from 'firebase/firestore'
 import { firebaseUploadHandler } from '@/lib/firebaseUploadHandler'
 import { useRouter } from 'next/router'
 const TweetInput = () => {
@@ -23,13 +23,13 @@ const TweetInput = () => {
     if (loading) return
     try {
       setLoading(true)
-      const docRef = await addDoc(collection(db, 'posts'), {
+      await addDoc(collection(db, 'posts'), {
         uid: session?.user.uid,
         name: session?.user.name,
         username: session?.user.username,
         userImage: session?.user.image,
         text: input,
-        date: new Date().toLocaleString('rs'),
+        timestamp: Timestamp.now().seconds,
         imageTw: imageUrl,
       })
       setInput('')

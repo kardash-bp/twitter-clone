@@ -1,4 +1,6 @@
 import { useRef } from 'react'
+import { db } from '@/firebase'
+
 import { useOutsideClick } from '@/lib/useOutsideClick'
 import { useCommentsStore } from '@/store/commentsStore'
 import ReactModal from 'react-modal'
@@ -6,17 +8,72 @@ import { shallow } from 'zustand/shallow'
 import { closeIcon, emoji, imgIcon, pin } from '@/assets/icons'
 import Image from 'next/image'
 import { useSession } from 'next-auth/react'
+import {
+  setDoc,
+  doc,
+  arrayUnion,
+  collection,
+  Timestamp,
+} from 'firebase/firestore'
+import { useRouter } from 'next/router'
 ReactModal.setAppElement('#__next')
 const CommentModal = () => {
+  const router = useRouter()
+  const { postComments, setPostComments } = useCommentsStore((state) => state)
+
   const { data } = useSession()
-  const [isOpen, post, setClose] = useCommentsStore(
-    (state) => [state.isOpen, state.post, state.setClose],
+  const [isOpen, post, setClose, comment, setComment] = useCommentsStore(
+    (state) => [
+      state.isOpen,
+      state.post,
+      state.setClose,
+      state.comment,
+      state.setComment,
+    ],
     shallow
   )
   const refModal = useRef<HTMLDivElement>(null)
   useOutsideClick(refModal, setClose)
 
-  console.log({ data })
+  const addComment = async () => {
+    if (!data || !data.user.username) return
+    const newComment = {
+      uid: data?.user.uid,
+      name: data?.user.name,
+      username: data?.user.username,
+      userImage: data?.user.image,
+      text: comment.text,
+      timestamp: Timestamp.now().seconds,
+      postId: post.id,
+    }
+    try {
+      await setDoc(
+        doc(db, 'comments', post.id),
+        { comments: arrayUnion(newComment) },
+        {
+          merge: true,
+        }
+      )
+      setPostComments({ [post.id]: [...postComments[post.id], newComment] })
+      setComment({
+        text: '',
+        name: '',
+        username: '',
+        userImage: '',
+        timestamp: 0,
+        uid: '',
+        postId: '',
+      })
+
+      if (router.pathname !== `/posts/${post.id}`) {
+        router.push(`/posts/${post.id}`)
+      }
+      router.replace(router.asPath)
+      setClose()
+    } catch (err: any) {
+      console.log(err.message)
+    }
+  }
 
   return (
     <ReactModal
@@ -27,7 +84,7 @@ const CommentModal = () => {
       shouldCloseOnEsc={true}
     >
       {' '}
-      <div ref={refModal} className='mx-auto  max-w-[600px] z-50'>
+      <div ref={refModal} className='mx-auto  w-[600px] z-50'>
         <div className=' border-0 rounded-xl shadow-lg flex flex-col bg-white outline-none focus:outline-none'>
           {/*header*/}
           <div className='flex items-center p-3 rounded-t'>
@@ -82,8 +139,17 @@ const CommentModal = () => {
                     rows={4}
                     placeholder='Tweet your replay'
                     className='w-full border-none focus:ring-0 text-lg placeholder-gray-700 tracking-wide min-h-[100px] text-gray-700'
-                    // value={input}
-                    // onChange={handleChange}
+                    value={comment.text}
+                    onChange={(e) =>
+                      setComment({
+                        text: e.target.value,
+                        name: data?.user.name!,
+                        username: data?.user.username!,
+                        userImage: data?.user.image!,
+                        uid: data?.user.uid!,
+                        postId: post.id,
+                      })
+                    }
                   ></textarea>
 
                   {!false && (
@@ -110,9 +176,9 @@ const CommentModal = () => {
                         </div>
                       </div>
                       <button
-                        // disabled={!input.trim()}
+                        disabled={!comment.text.trim()}
                         className='bg-sky-400 rounded-full px-4 text-white font-semibold text-md hover:brightness-95 disabled:opacity-50 cursor-pointer transition-all duration-200'
-                        // onClick={savePost}
+                        onClick={addComment}
                       >
                         Replay
                       </button>
