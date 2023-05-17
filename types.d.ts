@@ -16,17 +16,11 @@ export type TComment = {
   uid: string
   postId: string
 }
-export type TProvider = {
-  providers: {
-    google: {
-      id: string,
-      name: string,
-      type: string,
-      signinUrl: string,
-      callbackUrl: string
-
-    }
-  }
+export type TGoogleUser = {
+  displayName: string | null,
+  email: string | null,
+  photoURL: string | null,
+  uid: string | null
 }
 
 export type TweetType = {

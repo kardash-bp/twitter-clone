@@ -3,7 +3,7 @@
 import { initializeApp, getApp, getApps } from "firebase/app";
 import { getFirestore } from 'firebase/firestore';
 import { getStorage, ref } from 'firebase/storage';
-
+import { getAuth } from "firebase/auth";
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 
@@ -34,5 +34,5 @@ const firebaseConfig = {
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp()
 const db = getFirestore(app)
 const storage = getStorage()
-
-export { app, db, storage, ref }
+const auth = getAuth(app)
+export { auth, app, db, storage, ref }

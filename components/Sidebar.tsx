@@ -13,10 +13,27 @@ import {
   search,
   userIcon,
 } from '../assets/icons'
-import { useSession } from 'next-auth/react'
 import Link from 'next/link'
+import { auth, db } from '@/firebase'
+import { useEffect } from 'react'
+import { useUserStore } from '@/store/userStore'
+import { onAuthStateChanged } from 'firebase/auth'
+import { doc, getDoc } from 'firebase/firestore'
 const Sidebar = () => {
-  const { data: session, status } = useSession()
+  const { currentUser, setCurrentUser } = useUserStore((state) => state)
+  console.log(currentUser)
+
+  useEffect(() => {
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userRef = doc(db, 'users', auth.currentUser?.providerData[0].uid!)
+        const userSnap = await getDoc(userRef)
+        if (userSnap.exists()) {
+          setCurrentUser(user)
+        }
+      }
+    })
+  }, [])
   return (
     <div className='hidden pl-2 sm:flex sm:flex-col w-[60px]  xl:w-[245px]'>
       <div className=''>
@@ -30,7 +47,7 @@ const Sidebar = () => {
         <SidebarMenuItem text='Search' icon={search} />
         <SidebarMenuItem text='Explore' icon={explore} />
 
-        {session && (
+        {currentUser.uid && (
           <>
             <SidebarMenuItem text='Notifications' icon={bell} />
             <SidebarMenuItem text='Messages' icon={envelope} />
@@ -41,7 +58,7 @@ const Sidebar = () => {
           </>
         )}
       </div>
-      {session ? (
+      {currentUser && currentUser.uid ? (
         <>
           <button className='xl:w-52 h-12 xl:bg-blue-400 xl:rounded-full xl:shadow-md hover:brightness-95'>
             <Image
@@ -58,7 +75,7 @@ const Sidebar = () => {
           </button>
           <div className='hoverSideMenu  text-gray-800 flex items-center justify-center xl:justify-start mt-4 xl:h-auto xl:p-2'>
             <Image
-              src={session.user.image}
+              src={currentUser.userImg}
               alt='user'
               width={48}
               height={48}
@@ -71,19 +88,19 @@ const Sidebar = () => {
             />
 
             <div className='hidden xl:block xl:mx-2'>
-              <h4 className='font-bold'>{session.user.name}</h4>
-              <p className='text-gray-500'>@{session.user.username}</p>
+              <h4 className='font-bold'>{currentUser.name}</h4>
+              <p className='text-gray-500'>@{currentUser.username}</p>
             </div>
             <div className='icon hidden xl:inline'>{ellipsis}</div>
           </div>
         </>
       ) : (
-        <button
-          className='w-[3rem] leading-4 xl:w-[120px] xl:p-1 h-12 text-white bg-blue-400 rounded-full ml-2 shadow-md hover:brightness-95'
-          onClick={() => signIn()}
+        <Link
+          className=' text-center flex justify-center items-center w-[3rem] leading-4 xl:w-[120px] xl:p-1 h-12 text-white bg-blue-400 rounded-full ml-2 shadow-md hover:brightness-95'
+          href='/auth/signin'
         >
           Sign In{' '}
-        </button>
+        </Link>
       )}
     </div>
   )

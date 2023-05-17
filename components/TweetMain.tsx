@@ -5,6 +5,7 @@ import TweetInput from './TweetInput'
 import { TweetType } from '@/types'
 import dynamic from 'next/dynamic'
 import { AnimatePresence, motion } from 'framer-motion'
+import { useSession } from 'next-auth/react'
 const TweetMain = ({
   posts,
   comments,
@@ -12,17 +13,18 @@ const TweetMain = ({
   posts: TweetType[]
   comments: any
 }) => {
+  const { data } = useSession()
+  console.log(data)
   return (
     <div className='border-x md:max-w-[576px]'>
       {/* main header */}
       <div className='flex sticky items-center justify-between py-2 px-3 top-0 bg-white opacity-80 border-b border-gray-200'>
         {' '}
-        <h2 className='text-lg sm:text-xl font-bold cursor-pointer'>Home</h2>
-        <div className='flex items-center justify-center hover:bg-gray-200 rounded-full w-9 h-9'>
-          <Image src='/spark.png' width={16} height={16} alt='spark' />
-        </div>
+        <h2 className='text-lg sm:text-xl font-bold cursor-pointer py-2'>
+          Home
+        </h2>
       </div>
-      <TweetInput />
+      {data?.user.uid && <TweetInput />}
       <AnimatePresence>
         {posts?.map((post: any, idx: number) => (
           <motion.div
