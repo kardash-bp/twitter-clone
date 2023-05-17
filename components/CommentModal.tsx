@@ -7,21 +7,15 @@ import ReactModal from 'react-modal'
 import { shallow } from 'zustand/shallow'
 import { closeIcon, emoji, imgIcon, pin } from '@/assets/icons'
 import Image from 'next/image'
-import { useSession } from 'next-auth/react'
-import {
-  setDoc,
-  doc,
-  arrayUnion,
-  collection,
-  Timestamp,
-} from 'firebase/firestore'
+import { setDoc, doc, arrayUnion, Timestamp } from 'firebase/firestore'
 import { useRouter } from 'next/router'
+import { useUserStore } from '@/store/userStore'
 ReactModal.setAppElement('#__next')
 const CommentModal = () => {
   const router = useRouter()
   const { postComments, setPostComments } = useCommentsStore((state) => state)
 
-  const { data } = useSession()
+  const { currentUser } = useUserStore((state) => state)
   const [isOpen, post, setClose, comment, setComment] = useCommentsStore(
     (state) => [
       state.isOpen,
@@ -36,12 +30,12 @@ const CommentModal = () => {
   useOutsideClick(refModal, setClose)
 
   const addComment = async () => {
-    if (!data || !data.user.username) return
+    if (!currentUser || !currentUser.username) return
     const newComment = {
-      uid: data?.user.uid,
-      name: data?.user.name,
-      username: data?.user.username,
-      userImage: data?.user.image,
+      uid: currentUser.uid,
+      name: currentUser.name,
+      username: currentUser.username,
+      userImage: currentUser.userImg,
       text: comment.text,
       timestamp: Timestamp.now().seconds,
       postId: post.id,
@@ -127,7 +121,7 @@ const CommentModal = () => {
               <div className='flex mt-4'>
                 <div className='w-12'>
                   <Image
-                    src={data?.user.image!}
+                    src={currentUser.userImg!}
                     alt='user'
                     width={44}
                     height={44}
@@ -143,10 +137,10 @@ const CommentModal = () => {
                     onChange={(e) =>
                       setComment({
                         text: e.target.value,
-                        name: data?.user.name!,
-                        username: data?.user.username!,
-                        userImage: data?.user.image!,
-                        uid: data?.user.uid!,
+                        name: currentUser.name!,
+                        username: currentUser.username!,
+                        userImage: currentUser.userImg!,
+                        uid: currentUser.uid!,
                         postId: post.id,
                       })
                     }

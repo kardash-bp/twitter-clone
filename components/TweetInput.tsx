@@ -1,11 +1,11 @@
 import { emoji, imgIcon, pin } from '@/assets/icons'
 import { db } from '@/firebase'
-import { useSession } from 'next-auth/react'
 import Image from 'next/image'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { addDoc, collection, Timestamp } from 'firebase/firestore'
 import { firebaseUploadHandler } from '@/lib/firebaseUploadHandler'
 import { useRouter } from 'next/router'
+import { useUserStore } from '@/store/userStore'
 const TweetInput = () => {
   const [input, setInput] = useState('')
   const [image, setImage] = useState<File>()
@@ -15,7 +15,7 @@ const TweetInput = () => {
   const [percent, setPercent] = useState(0)
   const [loading, setLoading] = useState(false)
   let imgUploadRef = useRef<HTMLInputElement>(null)
-  const { data: session, status } = useSession()
+  const { currentUser } = useUserStore((state) => state)
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value)
   }
@@ -24,10 +24,10 @@ const TweetInput = () => {
     try {
       setLoading(true)
       await addDoc(collection(db, 'posts'), {
-        uid: session?.user.uid,
-        name: session?.user.name,
-        username: session?.user.username,
-        userImage: session?.user.image,
+        uid: currentUser.uid,
+        name: currentUser.name,
+        username: currentUser.username,
+        userImage: currentUser.userImg,
         text: input,
         timestamp: Timestamp.now().seconds,
         imageTw: imageUrl,
@@ -62,13 +62,13 @@ const TweetInput = () => {
   }
   useEffect(() => {
     if (image) {
-      firebaseUploadHandler(session?.user.uid!, image, setPercent, setImageUrl)
+      firebaseUploadHandler(currentUser.uid!, image, setPercent, setImageUrl)
     }
   }, [image])
   return (
     <div className='flex border-b border-gray-200 p-3 gap-5'>
       <Image
-        src={session?.user.image!}
+        src={currentUser.userImg!}
         alt='user'
         width={44}
         height={44}

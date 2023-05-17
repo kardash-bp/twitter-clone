@@ -1,6 +1,7 @@
 import { chartBar, chat, ellipsis, heart, share, trash } from '@/assets/icons'
 import { db } from '@/firebase'
 import { useCommentsStore } from '@/store/commentsStore'
+import { useUserStore } from '@/store/userStore'
 import { formatDate } from '@/utils/formatDate'
 import {
   doc,
@@ -12,7 +13,6 @@ import {
   deleteDoc,
 } from 'firebase/firestore'
 import { getStorage, ref, deleteObject } from 'firebase/storage'
-import { signIn, useSession } from 'next-auth/react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -20,16 +20,16 @@ import React, { useEffect, useState, useCallback } from 'react'
 
 const Post = ({ post, totalComments = 0 }: any) => {
   const router = useRouter()
-  const { data } = useSession()
   const setOpen = useCommentsStore((state) => state.setOpen)
+  const { currentUser } = useUserStore((state) => state)
 
   const [likes, setLikes] = useState<string[]>([])
   const [liked, setLiked] = useState(false)
   const formattedDate = formatDate(post.timestamp)
 
   const handleComment = async () => {
-    if (!data || !data.user.username) {
-      signIn()
+    if (!currentUser || !currentUser.username) {
+      router.push('/auth/signin')
     } else {
       setOpen(post)
     }
@@ -56,22 +56,22 @@ const Post = ({ post, totalComments = 0 }: any) => {
     }
   }
   const likeAddRemove = async () => {
-    if (!data || !data.user.username) return
+    if (!currentUser || !currentUser.username) return
 
     const fireDoc = doc(db, `likes/${post.id}`)
     const docSnap = await getDoc(fireDoc)
     const fireData = docSnap.data()
 
-    if (fireData?.usernames.includes(data?.user.username)) {
+    if (fireData?.usernames.includes(currentUser.username)) {
       // remove like
-      await updateDoc(fireDoc, { usernames: arrayRemove(data.user.username) })
+      await updateDoc(fireDoc, { usernames: arrayRemove(currentUser.username) })
       await getLikes()
     } else {
       // add like
       await setDoc(
         fireDoc,
         {
-          usernames: arrayUnion(data?.user?.username),
+          usernames: arrayUnion(currentUser.username),
         },
         { merge: true }
       )
@@ -95,7 +95,7 @@ const Post = ({ post, totalComments = 0 }: any) => {
   }, [])
 
   useEffect(() => {
-    if (data?.user.username && likes.includes(data?.user.username)) {
+    if (currentUser.username && likes.includes(currentUser.username)) {
       setLiked(true)
     } else {
       setLiked(false)
@@ -149,7 +149,7 @@ const Post = ({ post, totalComments = 0 }: any) => {
               </span>{' '}
               <span> {totalComments > 0 && totalComments}</span>
             </li>
-            {data?.user.uid === post.uid && (
+            {currentUser.uid === post.uid && (
               <li className='icon hover:text-red-600' onClick={delTweet}>
                 {trash}
               </li>

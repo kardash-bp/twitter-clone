@@ -1,11 +1,10 @@
-import Image from 'next/image'
 import React from 'react'
 const Post = dynamic(() => import('./Post'), { ssr: false })
 import TweetInput from './TweetInput'
 import { TweetType } from '@/types'
 import dynamic from 'next/dynamic'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useSession } from 'next-auth/react'
+import { useUserStore } from '@/store/userStore'
 const TweetMain = ({
   posts,
   comments,
@@ -13,8 +12,9 @@ const TweetMain = ({
   posts: TweetType[]
   comments: any
 }) => {
-  const { data } = useSession()
-  console.log(data)
+  const { currentUser } = useUserStore((state) => state)
+
+  console.log(currentUser)
   return (
     <div className='border-x md:max-w-[576px]'>
       {/* main header */}
@@ -24,7 +24,7 @@ const TweetMain = ({
           Home
         </h2>
       </div>
-      {data?.user.uid && <TweetInput />}
+      {currentUser.uid && <TweetInput />}
       <AnimatePresence>
         {posts?.map((post: any, idx: number) => (
           <motion.div

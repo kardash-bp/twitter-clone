@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import React, { useCallback, useEffect, useState } from 'react'
 import { chartBar, ellipsis, heart, share, trash } from '@/assets/icons'
-import { useSession } from 'next-auth/react'
 import { useCommentsStore } from '@/store/commentsStore'
 
 import { formatDate } from '@/utils/formatDate'
@@ -18,9 +17,11 @@ import { db } from '@/firebase'
 import { useRouter } from 'next/router'
 import { TComment } from '@/types'
 import { removeElementFromState } from '@/lib/removeElementFromState'
+import { useUserStore } from '@/store/userStore'
 const Comment = ({ comment }: { comment: TComment }) => {
-  const { data } = useSession()
   const router = useRouter()
+  const { currentUser } = useUserStore((state) => state)
+
   const { postComments, setPostComments } = useCommentsStore((state) => state)
   const [likes, setLikes] = useState<string[]>([])
   const [liked, setLiked] = useState(false)
@@ -43,22 +44,22 @@ const Comment = ({ comment }: { comment: TComment }) => {
     }
   }
   const likeAddRemove = async () => {
-    if (!data || !data.user.username) return
+    if (!currentUser || !currentUser.username) return
 
     const fireDoc = doc(db, `likes-comment/${comment.postId}`)
     const docSnap = await getDoc(fireDoc)
     const fireData = docSnap.data()
 
-    if (fireData?.usernames.includes(data?.user.username)) {
+    if (fireData?.usernames.includes(currentUser.username)) {
       // remove like
-      await updateDoc(fireDoc, { usernames: arrayRemove(data.user.username) })
+      await updateDoc(fireDoc, { usernames: arrayRemove(currentUser.username) })
       await getLikes()
     } else {
       // add like
       await setDoc(
         fireDoc,
         {
-          usernames: arrayUnion(data?.user?.username),
+          usernames: arrayUnion(currentUser?.username),
         },
         { merge: true }
       )
@@ -113,7 +114,7 @@ const Comment = ({ comment }: { comment: TComment }) => {
         </p>
 
         <ul className='post flex  items-center justify-between text-gray-500 p-2'>
-          {data?.user.uid === comment.uid && (
+          {currentUser.uid === comment.uid && (
             <li className='icon hover:text-red-600' onClick={delComment}>
               {trash}
             </li>
