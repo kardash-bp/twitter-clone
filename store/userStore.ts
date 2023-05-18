@@ -12,11 +12,12 @@ type State = {
   }
 
 }
+export const initialState = { name: '', email: '', username: '', userImg: '', uid: '', timestamp: '' }
 type Action = {
   setCurrentUser: (user: TGoogleUser) => void
 }
 export const useUserStore = create<State & Action>((set) => ({
-  currentUser: { name: '', email: '', username: '', userImg: '', uid: '', timestamp: '' },
+  currentUser: initialState,
   setCurrentUser: (user) => set(state => ({
     ...state,
     currentUser: {

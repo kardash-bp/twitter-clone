@@ -1,5 +1,4 @@
 import Image from 'next/image'
-import { signIn, signOut } from 'next-auth/react'
 import SidebarMenuItem from './SidebarMenuItem'
 import {
   bell,
@@ -17,12 +16,15 @@ import Link from 'next/link'
 import { auth, db } from '@/firebase'
 import { useEffect } from 'react'
 import { useUserStore } from '@/store/userStore'
-import { onAuthStateChanged } from 'firebase/auth'
+import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { doc, getDoc } from 'firebase/firestore'
 const Sidebar = () => {
   const { currentUser, setCurrentUser } = useUserStore((state) => state)
   console.log(currentUser)
-
+  const handleLogout = () => {
+    signOut(auth)
+    setCurrentUser({ displayName: '', email: '', photoURL: '', uid: '' })
+  }
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -60,7 +62,10 @@ const Sidebar = () => {
       </div>
       {currentUser && currentUser.uid ? (
         <>
-          <button className='xl:w-52 h-12 xl:bg-blue-400 xl:rounded-full xl:shadow-md hover:brightness-95'>
+          <button
+            className='xl:w-52 h-12 xl:bg-blue-400 xl:rounded-full xl:shadow-md hover:brightness-95'
+            onClick={handleLogout}
+          >
             <Image
               src='/tweet.png'
               alt='tweet button'
@@ -81,7 +86,7 @@ const Sidebar = () => {
               height={48}
               onClick={() => {
                 if (confirm('Are you sure?')) {
-                  signOut()
+                  handleLogout()
                 }
               }}
               className='rounded-full w-12 h-12'

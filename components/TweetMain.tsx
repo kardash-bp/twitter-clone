@@ -14,7 +14,6 @@ const TweetMain = ({
 }) => {
   const { currentUser } = useUserStore((state) => state)
 
-  console.log(currentUser)
   return (
     <div className='border-x md:max-w-[576px]'>
       {/* main header */}
