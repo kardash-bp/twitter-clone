@@ -20,7 +20,6 @@ import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { doc, getDoc } from 'firebase/firestore'
 const Sidebar = () => {
   const { currentUser, setCurrentUser } = useUserStore((state) => state)
-  console.log(currentUser)
   const handleLogout = () => {
     signOut(auth)
     setCurrentUser({ displayName: '', email: '', photoURL: '', uid: '' })

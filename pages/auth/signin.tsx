@@ -16,7 +16,6 @@ const SignIn = () => {
       const provider = new GoogleAuthProvider()
       const userCard = await signInWithPopup(auth, provider)
 
-      console.log(userCard.user)
       if (!userCard.user) return
       const { user } = userCard
       const userRef = doc(db, 'users', user.uid!)

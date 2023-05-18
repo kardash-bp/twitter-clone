@@ -12,7 +12,6 @@ import { leftArrow } from '@/assets/icons'
 import Link from 'next/link'
 import Comments from '@/components/Comments'
 import { useCommentsStore } from '@/store/commentsStore'
-import { useEffect, useState } from 'react'
 export type TArticle = {
   source: {
     id: string | null
@@ -36,7 +35,6 @@ export default function PostPage({ data, users, post }: TProps) {
   const router = useRouter()
   const { id } = router.query
   const { postComments } = useCommentsStore((state) => state)
-  console.log(postComments)
   return (
     <>
       <Head>
@@ -93,9 +91,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   if (docSnap.exists()) {
     post = docSnap.data()
     post!.id = id
-    // console.log(post)
   } else {
-    // docSnap.data() will be undefined in this case
     console.log('No such document!')
   }
 
