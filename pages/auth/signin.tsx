@@ -6,8 +6,11 @@ import Image from 'next/image'
 import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import { useUserStore } from '@/store/userStore'
 const SignIn = () => {
   const router = useRouter()
+  const { setCurrentUser } = useUserStore((state) => state)
+
   const signInWithGoogle = async () => {
     try {
       const provider = new GoogleAuthProvider()
@@ -29,6 +32,12 @@ const SignIn = () => {
           timestamp: serverTimestamp(),
         })
       }
+      setCurrentUser({
+        displayName: user.displayName!,
+        email: user.email,
+        photoURL: user.photoURL,
+        uid: user.uid,
+      })
       router.push('/')
     } catch (err: any) {
       console.log(err)

@@ -59,11 +59,11 @@ const CommentModal = () => {
         postId: '',
       })
 
+      router.replace(router.asPath)
+      setClose()
       if (router.pathname !== `/posts/${post.id}`) {
         router.push(`/posts/${post.id}`)
       }
-      router.replace(router.asPath)
-      setClose()
     } catch (err: any) {
       console.log(err.message)
     }

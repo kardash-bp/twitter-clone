@@ -15,7 +15,7 @@ const TweetMain = ({
   const { currentUser } = useUserStore((state) => state)
 
   return (
-    <div className='border-x md:max-w-[576px]'>
+    <div className='border-x w-[576px]'>
       {/* main header */}
       <div className='flex sticky items-center justify-between py-2 px-3 top-0 bg-white opacity-80 border-b border-gray-200'>
         {' '}

@@ -92,10 +92,17 @@ const Sidebar = () => {
               className='rounded-full w-12 h-12'
             />
 
-            <div className='hidden xl:block xl:mx-2'>
+            <button
+              className='hidden xl:block xl:mx-2'
+              onClick={() => {
+                if (confirm('Are you sure?')) {
+                  handleLogout()
+                }
+              }}
+            >
               <h4 className='font-bold'>{currentUser.name}</h4>
               <p className='text-gray-500'>@{currentUser.username}</p>
-            </div>
+            </button>
             <div className='icon hidden xl:inline'>{ellipsis}</div>
           </div>
         </>

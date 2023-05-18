@@ -35,9 +35,9 @@ const Comment = ({ comment }: { comment: TComment }) => {
         await deleteDoc(doc(db, 'likes-comment', comment.postId))
         removeElementFromState(postComments, comment, setPostComments)
         router.replace(router.asPath)
-        // if (router.pathname !== '/') {
-        //   router.push('/')
-        // }
+        if (router.pathname !== '/') {
+          router.push('/')
+        }
       } catch (err: any) {
         console.log(err.message)
       }
