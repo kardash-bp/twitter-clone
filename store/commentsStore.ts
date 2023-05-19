@@ -10,9 +10,9 @@ type State = {
 }
 type Action = {
   setOpen: (postId: string) => void
+  setComment: (data: TComment) => void
   setClose: () => void
   toggleModal: () => void
-  setComment: (data: TComment) => void
   setPostComments: (data: any) => void
 }
 export const useCommentsStore = create<State & Action>((set) => ({

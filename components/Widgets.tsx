@@ -14,7 +14,7 @@ const Widgets = ({ data, users }: { data: TArticle[]; users: any }) => {
           <input
             type='text'
             placeholder='Search Twitter'
-            className='absolute w-full inset-0 rounded-full pl-12 border-gray-400 text-gray-700 focus:shadow-lg'
+            className='absolute w-full inset-0 rounded-full pl-12 bg-gray-100 text-gray-700 focus:shadow-lg'
           />
         </div>
       </div>

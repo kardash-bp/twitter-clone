@@ -10,7 +10,10 @@ type State = {
     uid: string
     timestamp?: string
   }
-
+  isOpen: boolean
+  setIsOpen: () => void
+  setClose: () => void
+  toggleModal: () => void
 }
 export const initialState = { name: '', email: '', username: '', userImg: '', uid: '', timestamp: '' }
 type Action = {
@@ -18,6 +21,10 @@ type Action = {
 }
 export const useUserStore = create<State & Action>((set) => ({
   currentUser: initialState,
+  isOpen: true,
+  setIsOpen: () => set(state => ({ ...state, isOpen: true })),
+  toggleModal: () => set(state => ({ isOpen: !state.isOpen })),
+  setClose: () => set({ isOpen: false }),
   setCurrentUser: (user) => set(state => ({
     ...state,
     currentUser: {

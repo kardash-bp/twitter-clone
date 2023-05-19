@@ -14,6 +14,7 @@ import { db } from '@/firebase'
 import { TComment, TweetType } from '@/types'
 import CommentModal from '@/components/CommentModal'
 import { useCommentsStore } from '@/store/commentsStore'
+import TweetModal from '@/components/TweetModal'
 
 export type TArticle = {
   source: {
@@ -57,6 +58,7 @@ export default function Home({ data, users, tweets, comments }: TProps) {
         <Widgets data={data} users={users} />
         {/* modal */}
         <CommentModal />
+        <TweetModal />
       </main>
     </>
   )
