@@ -3,7 +3,7 @@ import { db } from '@/firebase'
 import Image from 'next/image'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { addDoc, collection, Timestamp } from 'firebase/firestore'
-import { firebaseUploadHandler } from '@/lib/firebaseUploadHandler'
+import { firebaseUploadHandler } from '@/pages/lib/firebaseUploadHandler'
 import { useRouter } from 'next/router'
 import { useUserStore } from '@/store/userStore'
 const TweetInput = () => {

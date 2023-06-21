@@ -13,6 +13,7 @@ import {
   deleteDoc,
 } from 'firebase/firestore'
 import { getStorage, ref, deleteObject } from 'firebase/storage'
+import moment from 'moment'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -25,8 +26,6 @@ const Post = ({ post, totalComments = 0 }: any) => {
 
   const [likes, setLikes] = useState<string[]>([])
   const [liked, setLiked] = useState(false)
-  const formattedDate = formatDate(post.timestamp)
-
   const handleComment = async () => {
     if (!currentUser || !currentUser.username) {
       router.push('/auth/signin')
@@ -121,7 +120,7 @@ const Post = ({ post, totalComments = 0 }: any) => {
               </h4>
               <span className='text-sm sm:text-base '>@{post.username} - </span>
               <span className='text-sm sm:text-base hover:underline'>
-                {formattedDate}
+                {moment(post.timestamp * 1000).fromNow()}
               </span>
             </div>
             <div className='flex items-center justify-center w-10 h-10 rounded-full hover:bg-sky-100 hover:text-sky-500'>

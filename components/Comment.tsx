@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { chartBar, ellipsis, heart, share, trash } from '@/assets/icons'
 import { useCommentsStore } from '@/store/commentsStore'
 
-import { formatDate } from '@/utils/formatDate'
+import moment from 'moment'
 import {
   doc,
   setDoc,
@@ -16,7 +16,7 @@ import {
 import { db } from '@/firebase'
 import { useRouter } from 'next/router'
 import { TComment } from '@/types'
-import { removeElementFromState } from '@/lib/removeElementFromState'
+import { removeElementFromState } from '@/pages/lib/removeElementFromState'
 import { useUserStore } from '@/store/userStore'
 const Comment = ({ comment }: { comment: TComment }) => {
   const router = useRouter()
@@ -25,7 +25,6 @@ const Comment = ({ comment }: { comment: TComment }) => {
   const { postComments, setPostComments } = useCommentsStore((state) => state)
   const [likes, setLikes] = useState<string[]>([])
   const [liked, setLiked] = useState(false)
-  const formattedDate = formatDate(comment.timestamp!)
 
   const delComment = async () => {
     if (window.confirm('Are you sure?')) {
@@ -102,7 +101,9 @@ const Comment = ({ comment }: { comment: TComment }) => {
               @{comment.username} -{' '}
             </span>
             <span className='text-sm sm:text-base hover:underline'>
-              {formattedDate}
+              {moment(comment.timestamp! * 1000)
+                .locale('rs')
+                .fromNow()}
             </span>
           </div>
           <div className='flex items-center justify-center w-10 h-10 rounded-full hover:bg-sky-100 hover:text-sky-500'>

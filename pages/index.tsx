@@ -6,15 +6,19 @@ import Widgets from '@/components/Widgets'
 import {
   DocumentData,
   collection,
+  doc,
+  getDoc,
   getDocs,
   orderBy,
   query,
 } from 'firebase/firestore'
-import { db } from '@/firebase'
+import { auth, db } from '@/firebase'
 import { TComment, TweetType } from '@/types'
 import CommentModal from '@/components/CommentModal'
 import { useCommentsStore } from '@/store/commentsStore'
 import TweetModal from '@/components/TweetModal'
+import { onAuthStateChanged, signOut } from 'firebase/auth'
+import { useUserStore } from '@/store/userStore'
 
 export type TArticle = {
   source: {
@@ -37,7 +41,25 @@ export type TProps = {
 }
 
 export default function Home({ data, users, tweets, comments }: TProps) {
+  const { currentUser, setCurrentUser, setIsOpen } = useUserStore(
+    (state) => state
+  )
   const { postComments, setPostComments } = useCommentsStore((state) => state)
+
+  useEffect(() => {
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userRef = doc(db, 'users', user.uid!)
+        const userSnap = await getDoc(userRef)
+        if (userSnap.exists()) {
+          setCurrentUser(user)
+        }
+      } else {
+        setCurrentUser({ displayName: '', email: '', photoURL: '', uid: '' })
+        signOut(auth)
+      }
+    })
+  }, [])
   useEffect(() => {
     setPostComments(comments)
   }, [])

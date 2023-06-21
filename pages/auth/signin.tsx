@@ -31,6 +31,7 @@ const SignIn = () => {
           timestamp: serverTimestamp(),
         })
       }
+
       setCurrentUser({
         displayName: user.displayName!,
         email: user.email,
@@ -55,7 +56,7 @@ const SignIn = () => {
         <Link href='/'>
           <h1 className='flex items-center text-2xl font-bold text-[#1da1f2] mb-8'>
             <Image src='/logo.png' width={68} height={68} alt='logo' /> Twitter
-            Clone Demo
+            Demo
           </h1>
         </Link>
         <button

@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { db } from '@/firebase'
 
-import { useOutsideClick } from '@/lib/useOutsideClick'
+import { useOutsideClick } from '@/pages/lib/useOutsideClick'
 import { useCommentsStore } from '@/store/commentsStore'
 import ReactModal from 'react-modal'
 import { shallow } from 'zustand/shallow'

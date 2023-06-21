@@ -21,7 +21,7 @@ type Action = {
 }
 export const useUserStore = create<State & Action>((set) => ({
   currentUser: initialState,
-  isOpen: true,
+  isOpen: false,
   setIsOpen: () => set(state => ({ ...state, isOpen: true })),
   toggleModal: () => set(state => ({ isOpen: !state.isOpen })),
   setClose: () => set({ isOpen: false }),

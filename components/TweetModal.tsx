@@ -1,7 +1,7 @@
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { db } from '@/firebase'
 
-import { useOutsideClick } from '@/lib/useOutsideClick'
+import { useOutsideClick } from '@/pages/lib/useOutsideClick'
 import { useCommentsStore } from '@/store/commentsStore'
 import ReactModal from 'react-modal'
 import { shallow } from 'zustand/shallow'
@@ -17,7 +17,7 @@ import {
 } from 'firebase/firestore'
 import { useRouter } from 'next/router'
 import { useUserStore } from '@/store/userStore'
-import { firebaseUploadHandler } from '@/lib/firebaseUploadHandler'
+import { firebaseUploadHandler } from '@/pages/lib/firebaseUploadHandler'
 ReactModal.setAppElement('#__next')
 const TweetModal = () => {
   const [input, setInput] = useState('')
